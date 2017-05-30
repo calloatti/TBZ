@@ -1,0 +1,125 @@
+_TBZ CLASS CHANGELOG
+
+MODIFIED TBMENIITEMADD, NOW TBMENUPICTURSIZE ALSO WORKS FOR VISTA AND UP
+----------------------------------------------------------------------------
+UITIMER GETS DISABLED WHEN THE DEBUGGER WINDOW IS OPEN. SEE TIMER EVENT OF TIMER
+ADDED TBTIMER EVENT FOR USER CODE
+REFACTORED TOOLTIP HIDE/SHOW CODE. EVERYTHING IS NOW IN _UITIMER
+----------------------------------------------------------------------------
+REMOVED _TBZUTIL AND _TBZCONTEXTMENU CLASSES, EVERYTHING MERGED TO _TB TO
+SPEED UP EXECUTION
+----------------------------------------------------------------------------
+MOVED _STREAMCREATE, _STREAMREAD, _STREAMRELEASE, _PARSEICOFILE TO _TBZUTIL CLASS
+SINCE THIS METHODS ARE ALSO USED BY _TBZCONTEXTMENU AND WHERE DUPLICATED
+----------------------------------------------------------------------------
+ADDED ICO FILE PARSING ROUTINE TO AVOID GDI+ BUGS WHEN DEALING WITH ICO FILES
+_TBCONTEXTMENU RENAMED TO _TBZCONTEXTMENU
+----------------------------------------------------------------------------
+MOVED RGB RATIOS CALCULATION IN _UIGETBITMAP SO IT ONLY RUNS ONCE
+MOVED GPBITMAP CREATION OF PICTURE TO _PICRESET, ALSO GETTING PICTURE INFO THERE
+THIS SPEEDS UP GENERATION OF BITMAP SINCE WE ONLY DO IT WHEN PIC CHANGES
+AND NOT EVERYTIME STATE CHANGES. RENAMED _GENERATEBITMAP TO _UIGETBITMAP
+----------------------------------------------------------------------------
+TBPICTURE ALPHA PROPERTY ADDED
+PICTUREPOSITION PROPERTY: NOW ALL VALUES ARE SUPPORTED
+TBCONTEXTMENU: ADDED SET TRANSPARENT TOP LEFT PIXEL FOR BMP FILES
+----------------------------------------------------------------------------
+GENERATEBITMAP: GROUPED ALL THE CACHED/UNCACHED IFS IN ONE
+UISTATEPICTUREVAL PROPERTY MOVED TO COLUMN OF UISTATES
+----------------------------------------------------------------------------
+HFONTCREATEDEFAULT REMOVED, CODE MOVED TO HFONTCREATE
+LOADING/CACHING OF STYLE PNG MOVED TO INIT
+----------------------------------------------------------------------------
+STREAMRELEASE NOW USES iIUnknown_AtomicRelease FOR VISTA OR NEWER
+STREAMCREATE NOW USES SHCreateMemStream FOR VISTA OR NEWER
+STREAMREAD NOW USES IStream_Read/IStream_Size FOR VISTA OR NEWER
+MULTI-LINE CAPTIONS IMPLEMENTED. THERE IS NO LIMIT TO THE NUMBER OF LINES.
+----------------------------------------------------------------------------
+CHANGED NAME OF UITIMER TO _TOOLTIPTIMER TO BETTER REFLECT ITS FUNCTION
+ORGANIZED THE LAYOUT HANDLING CODE
+FIXED THE LOGIC TO HANDLE THE TIMER TO SHOW/HIDE TOOLTIP
+----------------------------------------------------------------------------
+MOVED ALL THE LOGIC TO CHOOSE UISTATE AWAY FROM GENERATEBITMAP INTO UIUPDATE
+CREATED AN ARRAY PROPERTY UISTATES TO HOLD VALUES FOR EACH UISTATE THAT GENERATEBITMAP USES
+THIS ARRAY PROPERTY IS FILLED BY UISTATESBUILD
+ADDED DROPDOWNARROWX PROPERTY THAT IS CALCULATED BASED ON LAYOUT
+ADDED ANCHOR PROPERTY TO UISHAPEL AND UISHAPER TO TAKE HEIGHT CHANGES INTO ACCOUNT
+----------------------------------------------------------------------------
+CHANGED BUTTON BACKGROUND DRAWING METHOD, NOW IT IS DRAWN IN 2 PARTS TO CONSIDER SPLITBUTTONS
+ADDED TBSPLITWIDTH AND TBDROPDOWNWIDTH PROPERTIES WITH DEFAULT VALUE 0
+THEY ARE CALCULATED AUTOMATICALLY
+ADDED LOGIC TO SPLIT CONTROL, NOW LEFT AND RIGHT PARTS HOT AND PRESSED ARE SEPARATE
+ADDED 4 NEW STATES TO H FILE FOR THIS.
+THIS WAS MOSTLY TO BETTER EMULATE WIN8 SPLIT WITH STYLE 7
+CHANGED FORMAT OF PNG BITMAP PARTS, ADDED LEFT/RIGHT SPLIT HOT AND PRESSED STATES
+CHANGED 'DROPDOWN' TO 'SPLIT'
+CHANGED 'WHOLEDROPDOWN' TO 'DROPDOWN'
+MOVED DRAWING OF BUTTON IMAGE BEFORE DRAWING OF TEXT SO PICTUREPOSITION 12
+LOOKS CORRECT WITH TEXT OVER IMAGE
+ADDED CODE TO CHECK FOR PICTUREPOSITION PROPERTY.
+NOW THE PICTURE AND CAPTION CAN BE IN DIFFERENT POSITIONS.
+ADDED A _PICSETSIZE METHOD TO DETERMINE PICTURE SIZE.
+ADDED A _PICSETRECT METHOD TO DETERMINE PICTURE RECT.
+CHANGED NAME OF METHOD TO DETERMINE TEXT RECT TO _TEXTSETRECT
+ADDED PROPERTIES FOR PIC RECT: PICH, PICW, PICX, PICY, PICM
+CHANGED INIT METHOD
+ADDED _CTRLSETWIDTH TO DETERMINE CONTROL SIZE, MOVED CODE OUT OF INIT
+ADDED _SETTEXTSIZE TO DETERMINE SIZE OF TEXT, MOVED IT OUT OF _HFONTCREATE
+----------------------------------------------------------------------------
+ADDED MORE API FUNCTIONS DECLARATIONS
+ADDED MISSING RESULT CHECK FOR GDI+ FUNCTION CALLS
+ADDED CHECK FOR LENGTH OF TOOLTIP TEXT WHEN DOING SYS(2600) MAX LEN 1024
+----------------------------------------------------------------------------
+IMPLEMENTED DROPDOWN MENU
+NEW METHOD TBMENUADD
+NEW METHOD TBMENUSHOW
+IMPLEMENTED MENU BITMAPS FOR VISTA AND NEWER OS VERSIONS
+----------------------------------------------------------------------------
+ADDED TOP_ACCES METHOD
+This method was added because the original commandbutton control is moved vertically out
+of the way by 4096 pixels, and then the top property was returning this value instead of
+the surrogate control top value.
+
+*!* TOP_ACCESS
+
+If This._initdone Then
+	Return This._octrl.Top
+Else
+	Return This.Top
+Endif
+----------------------------------------------------------------------------
+EDITED ALL PNG STYLE FILES, "TOGGLED HOT" PART CHANGED TO LOOK LIKE "NORMAL HOT" PART,
+THIS IS THE WAY MS DOES IT IN THE RIBBON FRAMEWORK IN WINDOWS 8.1
+----------------------------------------------------------------------------
+CHANGED CONSTANT NAME TBZ_STATE_CHECKED_DISABLED TO TBZ_CHECKEDDISABLED
+
+This is a bug, at some point I changed the constants names of the states in _tbz,h and in the code
+but this one was left unchanged.
+----------------------------------------------------------------------------
+CHANGED NAMES OF OBJECTS IN _TBZ CLASS
+oImage TO uiImage
+oShapeR TO uiShapeR
+oShapeL TO uiShapeL
+oTimer TO uiTimer
+
+CHANGED NAMES OF THOSE OBJECTS IN CODE IN _TB CLASS
+----------------------------------------------------------------------------
+_TB.TBVALUE_ASSIGN CHANGED LINE
+If m.octrl.Class == This.Class And m.octrl.tbClass = This.tbClass And m.octrl.tbgroupid = This.tbgroupid AND m.octrl.Name # This.Name Then
+TO
+If m.octrl.Class == This.Class And m.octrl.tbgroupid = This.tbgroupid AND m.octrl.Name # This.Name Then
+----------------------------------------------------------------------------
+_TB.TBVALUE_ASSIGN CHANGED LINE
+If This.tbClass = TBZ_RADIO Then
+TO
+If This.tbGroupID # 0 Then
+
+This is to make groupid tbvalue changes work for all controls, not only the radio class
+----------------------------------------------------------------------------
+_TB.MOUSEUP ADDED CASE TO DO CASE
+		Case This.tbClass = TBZ_TOGGLE AND This.tbGroupID # 0
+			This.tbValue = .T.
+
+This is to make toggle controls with a tbGroupID act like radio buttons
+----------------------------------------------------------------------------
+
